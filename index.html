@@ -3,144 +3,349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f7fb">
 <title>Tabel KPR Bulanan</title>
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 <style>
   :root {
-    --bg: #eef3fb;
+    --bg: #f4f7fb;
     --card: #ffffff;
-    --head: #cfe0f5;
-    --alt: #f6f9fd;
-    --border: #d9e5f2;
-    --text: #3f4d5c;
-    --muted: #7a8795;
-    --accent: #7fa8d4;
-    --lunas: #dcecf7;
-    --shadow: 0 6px 20px rgba(80, 100, 130, .10);
+    --head: #e8f0fb;
+    --alt: #f8fbff;
+    --border: #dbe6f4;
+    --text: #26364a;
+    --ink: #142438;
+    --muted: #718098;
+    --accent: #2f6fb0;
+    --accent-soft: #e7f0fa;
+    --lunas: #e6f5ed;
+    --ok: #2e9e63;
+    --shadow: 0 12px 30px rgba(30, 60, 110, .08);
+    --radius: 16px;
+    --ease: cubic-bezier(.2, .7, .2, 1);
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    padding: 24px 14px 50px;
+    min-height: 100vh;
+    padding: 0 16px 54px;
     background: var(--bg);
     color: var(--text);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
+    transition: background-color .4s var(--ease), color .4s var(--ease);
   }
-  .wrap { max-width: 1200px; margin: 0 auto; }
-  header { margin-bottom: 18px; }
-  h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: .2px; }
-  .sub { margin: 0; color: var(--muted); font-size: 13px; }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 340px;
+    background: radial-gradient(820px 240px at 50% -60px, var(--accent-soft), transparent 72%);
+    pointer-events: none;
+    z-index: -1;
+    opacity: .95;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  /* Hero */
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 22px;
+    padding: 40px 4px 26px;
+  }
+  .brand { display: flex; align-items: center; gap: 15px; }
+  .mark {
+    width: 54px; height: 54px;
+    border-radius: 16px;
+    background: var(--accent);
+    color: #fff;
+    display: grid; place-items: center;
+    flex: 0 0 auto;
+    box-shadow: 0 10px 22px rgba(47, 111, 176, .28);
+  }
+  .mark svg { width: 28px; height: 28px; display: block; }
+  h1 {
+    margin: 0;
+    font-size: clamp(24px, 3.2vw, 34px);
+    line-height: 1.14;
+    letter-spacing: -.025em;
+    font-weight: 750;
+    color: var(--ink);
+  }
+  .sub { margin: 6px 0 0; color: var(--muted); font-size: 13px; max-width: 58ch; }
+  .stats { display: flex; flex-wrap: wrap; gap: 9px; }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 10px 15px;
+    min-width: 116px;
+    box-shadow: var(--shadow);
+  }
+  .stat .k {
+    display: block;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    font-weight: 800;
+    color: var(--muted);
+  }
+  .stat .v {
+    display: block;
+    margin-top: 3px;
+    font-size: 18px;
+    font-weight: 750;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .v.small { font-size: 13px; }
+  .stat.pct .v { color: var(--accent); }
+  .stat.bump { animation: bump .45s var(--ease); }
+  @keyframes bump { 0% { transform: scale(1); } 35% { transform: scale(1.06); } 100% { transform: scale(1); } }
+
+  /* Cards */
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 16px;
+    border-radius: var(--radius);
+    padding: 22px;
+    margin: 0 0 16px;
     box-shadow: var(--shadow);
+    transition: background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .4s var(--ease);
   }
-  h2 { margin: 0 0 14px; font-size: 16px; }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 12px;
+  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .step {
+    width: 27px; height: 27px;
+    border-radius: 9px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 12px;
+    flex: 0 0 auto;
   }
-  label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .card h2 { margin: 0; font-size: 16px; letter-spacing: -.01em; color: var(--ink); }
+  .card-note { margin-left: auto; font-size: 11px; color: var(--muted); }
+
+  /* Forms */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 14px; }
+  label.field {
+    display: flex; flex-direction: column; gap: 6px;
+    font-size: 10.5px; color: var(--muted);
+    font-weight: 750; letter-spacing: .05em; text-transform: uppercase;
+  }
   input, select {
     width: 100%;
-    padding: 9px 10px;
+    padding: 11px 12px;
     border: 1px solid var(--border);
-    border-radius: 9px;
-    background: var(--card);
+    border-radius: 10px;
+    background: var(--alt);
     color: var(--text);
     font: inherit;
     font-size: 14px;
+    text-transform: none;
+    letter-spacing: normal;
+    transition: border-color .2s, box-shadow .2s, background-color .2s;
   }
-  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  input:hover, select:hover { border-color: var(--accent); }
+  input:focus-visible, select:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    background: var(--card);
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
   button, .file-btn {
     border: 1px solid var(--accent);
     background: var(--accent);
     color: #fff;
-    padding: 9px 13px;
-    border-radius: 9px;
+    padding: 10px 15px;
+    border-radius: 10px;
     font: inherit;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 650;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    box-shadow: 0 4px 12px rgba(47, 111, 176, .18);
+    transition: transform .18s var(--ease), box-shadow .18s var(--ease), filter .18s,
+                background-color .2s, border-color .2s, color .2s;
   }
-  button.ghost, .file-btn.ghost { background: var(--card); color: var(--text); }
-  button:hover, .file-btn:hover { filter: brightness(.97); }
-  .head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
-  .head-row h2 { margin-bottom: 8px; }
-  .hint { margin: 12px 0 0; color: var(--muted); font-size: 12px; }
-  .palette { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  button:hover, .file-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(47, 111, 176, .26); filter: brightness(1.03); }
+  button:active, .file-btn:active { transform: translateY(0); }
+  button:focus-visible, .file-btn:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
+  button.ghost, .file-btn.ghost {
+    background: var(--card); color: var(--text);
+    border-color: var(--border); box-shadow: none;
+  }
+  button.ghost:hover, .file-btn.ghost:hover {
+    border-color: var(--accent); color: var(--accent);
+    box-shadow: 0 6px 14px rgba(47, 111, 176, .10);
+  }
+  .hint { margin: 13px 0 0; color: var(--muted); font-size: 12px; }
+
+  /* Palette */
+  .palette { display: flex; flex-wrap: wrap; gap: 9px; }
   .swatch {
     background: var(--head);
     color: var(--text);
     border: 2px solid transparent;
+    padding: 8px 12px;
   }
-  .swatch.aktif { border-color: var(--accent); box-shadow: 0 0 0 2px var(--card) inset; }
-  .swatch span { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-  .inline { flex-direction: row; align-items: center; gap: 10px; }
-  .inline input[type="color"] { width: 48px; height: 36px; padding: 2px; cursor: pointer; }
-  .progress-wrap { margin: 6px 0 14px; }
-  .progress-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .progress { height: 9px; background: var(--alt); border-radius: 99px; overflow: hidden; }
-  .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .25s ease; }
-  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
-  table { width: 100%; border-collapse: collapse; min-width: 960px; font-size: 13px; }
-  th, td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
-  th { background: var(--head); font-size: 12px; white-space: nowrap; position: sticky; top: 0; }
+  .swatch span { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(255, 255, 255, .75); }
+  .swatch.aktif { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  label.inline {
+    flex-direction: row; align-items: center; gap: 12px;
+    margin-top: 16px; text-transform: none; letter-spacing: normal; font-size: 12px;
+  }
+  .inline input[type="color"] { width: 58px; height: 38px; padding: 3px; border-radius: 10px; cursor: pointer; flex: 0 0 auto; }
+
+  /* Progress */
+  .head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .head-row .card-head { margin-bottom: 8px; }
+  .head-row .actions { margin-top: 0; }
+  .progress-wrap { margin: 10px 0 18px; }
+  .progress-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .progress {
+    height: 10px;
+    background: var(--alt);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress > div {
+    height: 100%; width: 0;
+    background: var(--accent);
+    border-radius: 99px;
+    position: relative;
+    transition: width .55s var(--ease), background-color .4s var(--ease);
+  }
+  .progress > div::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 2.6s infinite;
+  }
+  @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+  /* Table */
+  .table-scroll { overflow: auto; max-height: 62vh; border: 1px solid var(--border); border-radius: 12px; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 960px; font-size: 13px; }
+  th, td { padding: 11px 12px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+  thead th {
+    background: var(--head);
+    color: var(--ink);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    position: sticky; top: 0; z-index: 2;
+    box-shadow: 0 1px 0 var(--border);
+  }
+  tbody tr { transition: background-color .2s, filter .2s; --i: 0; }
+  tbody tr:hover, tbody tr:nth-child(even):hover { background: var(--accent-soft); }
   tbody tr:nth-child(even) { background: var(--alt); }
   tbody tr.lunas { background: var(--lunas); }
   tbody tr:last-child td { border-bottom: 0; }
-  td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  td small { display: block; color: var(--muted); font-size: 10px; }
-  td .dibayar { min-width: 110px; padding: 5px 7px; text-align: right; }
-  td .catatan { min-width: 130px; padding: 5px 7px; }
-  .status { flex-direction: row; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; font-size: 12px; color: inherit; font-weight: 500; }
-  .status input { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
-  .lunas .status span { font-weight: 700; }
-  .kosong { text-align: center; color: var(--muted); padding: 28px 10px; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; background: var(--alt); font-size: 11px; font-weight: 700; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+  td .dibayar, td .catatan { min-width: 110px; padding: 7px 9px; background: var(--card); border-radius: 8px; }
+  td .catatan { min-width: 140px; }
+  .status {
+    flex-direction: row; align-items: center; gap: 7px;
+    white-space: nowrap; cursor: pointer; font-size: 12px;
+    color: inherit; font-weight: 600; text-transform: none; letter-spacing: normal;
+  }
+  .status input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex: 0 0 auto; }
+  .lunas .status span { color: var(--ok); font-weight: 750; }
+  .kosong { text-align: center; color: var(--muted); padding: 36px 12px; white-space: normal; }
+  .badge { display: inline-block; padding: 4px 10px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 750; }
+  .tbl-enter tr { animation: rowIn .34s var(--ease) both; animation-delay: calc(var(--i) * 16ms); }
+  @keyframes rowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* Reveal */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s var(--ease), transform .55s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .foot { text-align: center; color: var(--muted); font-size: 11px; padding: 16px 8px 0; }
+
+  @media (max-width: 680px) {
+    body { padding: 0 11px 40px; }
+    .hero { padding: 28px 2px 20px; }
+    .stats { width: 100%; }
+    .stat { flex: 1 1 30%; min-width: 0; }
+    .card { padding: 16px; border-radius: 14px; }
+    .card-note { display: none; }
+    .actions button, .actions .file-btn { flex: 1 1 auto; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+  }
   @media print {
     body { background: #fff; padding: 0; }
+    body::before { display: none; }
     .card { box-shadow: none; break-inside: avoid; }
-    button, .file-btn, .palette, .inline, .actions { display: none !important; }
+    button, .file-btn, .palette, .inline, .actions, .stats, .mark { display: none !important; }
+    .reveal { opacity: 1; transform: none; }
     th { position: static; }
+    .table-scroll { max-height: none; overflow: visible; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>Tabel KPR Bulanan</h1>
-    <p class="sub">Jadwal angsuran per bulan · bisa diisi tanpa internet · data tersimpan otomatis di browser perangkat ini</p>
+  <header class="hero">
+    <div class="brand reveal">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5 12 3l9 7.5"></path>
+          <path d="M5.5 9.5V21h13V9.5"></path>
+          <path d="M9 21v-6h6v6"></path>
+          <path d="M9 12.5h6"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Tabel KPR Bulanan</h1>
+        <p class="sub">Jadwal angsuran per bulan · bisa diisi tanpa internet · data tersimpan otomatis di browser perangkat ini</p>
+      </div>
+    </div>
+    <div class="stats reveal" style="transition-delay:.08s" aria-label="Ringkasan pembayaran">
+      <div class="stat"><span class="k">Total angsuran</span><span class="v small" id="statTotal">—</span></div>
+      <div class="stat"><span class="k">Bulan lunas</span><span class="v" id="statLunas">—</span></div>
+      <div class="stat pct"><span class="k">Progres</span><span class="v" id="statPct">0%</span></div>
+    </div>
   </header>
 
-  <section class="card">
-    <h2>1. Data Pinjaman</h2>
+  <section class="card reveal">
+    <div class="card-head"><span class="step">1</span><h2>Data Pinjaman</h2><span class="card-note">Langkah awal</span></div>
     <div class="grid">
-      <label>Nama pinjaman
+      <label class="field">Nama pinjaman
         <input id="nama" type="text" placeholder="Contoh: KPR Rumah Pertama">
       </label>
-      <label>Pokok pinjaman (Rp)
+      <label class="field">Pokok pinjaman (Rp)
         <input id="pokok" type="number" min="0" step="1000" placeholder="500000000">
       </label>
-      <label>Bunga per tahun (%)
+      <label class="field">Bunga per tahun (%)
         <input id="bunga" type="number" min="0" step="0.01" placeholder="6.5">
       </label>
-      <label>Tenor (bulan)
+      <label class="field">Tenor (bulan)
         <input id="tenor" type="number" min="1" step="1" placeholder="240">
       </label>
-      <label>Bulan angsuran pertama
+      <label class="field">Bulan angsuran pertama
         <input id="mulai" type="date">
       </label>
-      <label>Metode angsuran
+      <label class="field">Metode angsuran
         <select id="metode">
           <option value="anuitas">Anuitas (angsuran tetap)</option>
           <option value="flat">Flat (pokok tetap)</option>
@@ -154,21 +359,21 @@
     <p class="hint" id="ringkasan"></p>
   </section>
 
-  <section class="card">
-    <h2>2. Pilih Warna Tampilan (Pastel)</h2>
+  <section class="card reveal">
+    <div class="card-head"><span class="step">2</span><h2>Personalisasi Warna</h2><span class="card-note">Pilih nuansa</span></div>
     <div class="palette" id="palette"></div>
-    <label class="inline">Atau warna aksen kustom
-      <input type="color" id="warnaKustom" value="#7fa8d4">
+    <label class="field inline">Atau warna aksen kustom
+      <input type="color" id="warnaKustom" value="#2f6fb0">
     </label>
     <div class="actions">
       <button id="btnThemeReset" class="ghost">Kembali ke pastel bawaan</button>
     </div>
   </section>
 
-  <section class="card">
+  <section class="card reveal">
     <div class="head-row">
       <div>
-        <h2>3. Jadwal &amp; Pembayaran</h2>
+        <div class="card-head"><span class="step">3</span><h2>Jadwal &amp; Pembayaran</h2></div>
         <div class="hint" id="judulPinjaman"></div>
       </div>
       <div class="actions" style="margin-top:0">
@@ -191,15 +396,15 @@
       <table>
         <thead>
           <tr>
-            <th>Bulan ke-</th>
-            <th>Periode</th>
-            <th style="text-align:right">Pokok</th>
-            <th style="text-align:right">Bunga</th>
-            <th style="text-align:right">Angsuran</th>
-            <th style="text-align:right">Dibayar (Rp)</th>
-            <th style="text-align:right">Sisa Pokok</th>
-            <th>Status</th>
-            <th>Catatan</th>
+            <th scope="col">Bulan ke-</th>
+            <th scope="col">Periode</th>
+            <th scope="col" style="text-align:right">Pokok</th>
+            <th scope="col" style="text-align:right">Bunga</th>
+            <th scope="col" style="text-align:right">Angsuran</th>
+            <th scope="col" style="text-align:right">Dibayar (Rp)</th>
+            <th scope="col" style="text-align:right">Sisa Pokok</th>
+            <th scope="col">Status</th>
+            <th scope="col">Catatan</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -214,6 +419,8 @@
     </div>
     <p class="hint">Kolom <b>Dibayar</b> dan <b>Catatan</b> bisa diedit langsung. Centang <b>Sudah dibayar</b> untuk menandai lunas. Semua perubahan tersimpan otomatis.</p>
   </section>
+
+  <p class="foot">Data disimpan lokal di browser ini · gunakan Cadangkan JSON untuk pindah perangkat</p>
 </div>
 
 <script>
@@ -223,14 +430,32 @@
   var KEY = 'kpr-bulanan-v1';
 
   var PALETTES = {
-    biru:   { label: 'Biru',   bg: '#eef3fb', card: '#ffffff', head: '#cfe0f5', alt: '#f6f9fd', border: '#d9e5f2', text: '#3f4d5c', accent: '#7fa8d4' },
-    pink:   { label: 'Pink',   bg: '#fdf0f4', card: '#fffafb', head: '#f8d6e3', alt: '#fff5f8', border: '#f2d6e0', text: '#5c424c', accent: '#d98caa' },
-    hijau:  { label: 'Hijau',  bg: '#f0f8f1', card: '#fbfffb', head: '#d3ecd6', alt: '#f6fbf6', border: '#d8e9db', text: '#3d5444', accent: '#83b88c' },
-    ungu:   { label: 'Ungu',   bg: '#f6f1fb', card: '#fdfaff', head: '#e3d5f2', alt: '#faf6fd', border: '#e5d9ef', text: '#4c425c', accent: '#a98cc8' },
-    kuning: { label: 'Kuning', bg: '#fdf9ec', card: '#fffdf6', head: '#f7e9b8', alt: '#fffbe9', border: '#efe3bc', text: '#574d35', accent: '#c9ad5c' },
-    peach:  { label: 'Peach',  bg: '#fdf3ee', card: '#fffbf8', head: '#f7dbc9', alt: '#fff8f3', border: '#f0ddd0', text: '#5c463c', accent: '#cf9b7d' },
-    abu:    { label: 'Abu',    bg: '#f2f4f6', card: '#ffffff', head: '#dfe4e9', alt: '#f8f9fa', border: '#dde2e7', text: '#46505a', accent: '#93a1af' }
+    biru:   { label: 'Biru',   bg: '#f4f7fb', card: '#ffffff', head: '#e8f0fb', alt: '#f8fbff', border: '#dbe6f4', text: '#26364a', accent: '#2f6fb0' },
+    pink:   { label: 'Pink',   bg: '#fdf4f7', card: '#ffffff', head: '#fbe6ef', alt: '#fff8fb', border: '#f4dbe7', text: '#4a3340', accent: '#c05a83' },
+    hijau:  { label: 'Hijau',  bg: '#f3f9f4', card: '#ffffff', head: '#e2f2e6', alt: '#f8fdf9', border: '#d8ebdd', text: '#2c4534', accent: '#3d8a55' },
+    ungu:   { label: 'Ungu',   bg: '#f7f4fc', card: '#ffffff', head: '#ece3fa', alt: '#fbf8ff', border: '#e4daf3', text: '#3c3350', accent: '#7a5bb5' },
+    kuning: { label: 'Kuning', bg: '#fdfaf0', card: '#ffffff', head: '#f9efcf', alt: '#fffcf2', border: '#f0e5c4', text: '#4a422c', accent: '#b8912f' },
+    peach:  { label: 'Peach',  bg: '#fdf6f1', card: '#ffffff', head: '#fae7d8', alt: '#fffaf6', border: '#f2dfd0', text: '#4d3a30', accent: '#c47a4e' },
+    abu:    { label: 'Abu',    bg: '#f5f7f8', card: '#ffffff', head: '#e8edf0', alt: '#fafbfc', border: '#dde4e8', text: '#37424a', accent: '#5f7382' }
   };
+
+  function reduce() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function bump(el) {
+    if (reduce()) return;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
+
+  function setStat(id, value, pulse) {
+    var el = document.getElementById(id);
+    if (!el || el.textContent === value) return;
+    el.textContent = value;
+    if (pulse) bump(el);
+  }
 
   function bulanIni() {
     var d = new Date();
@@ -343,14 +568,15 @@
     });
   }
 
-  function renderTable() {
+  function renderTable(animate) {
     var tbody = document.getElementById('tbody');
+    tbody.classList.toggle('tbl-enter', !!animate && !reduce());
     if (!state.rows.length) {
       tbody.innerHTML = '<tr><td colspan="9" class="kosong">Belum ada jadwal. Isi data pinjaman lalu klik “Buat / Perbarui Jadwal”.</td></tr>';
       return;
     }
     tbody.innerHTML = state.rows.map(function (r, idx) {
-      return '<tr class="' + (r.lunas ? 'lunas' : '') + '" data-i="' + idx + '">' +
+      return '<tr class="' + (r.lunas ? 'lunas' : '') + '" data-i="' + idx + '" style="--i:' + idx + '">' +
         '<td class="num">' + (idx + 1) + '</td>' +
         '<td>' + formatPeriode(r.tanggal) + '<small>' + escapeAttr(r.tanggal) + '</small></td>' +
         '<td class="num">' + rupiah(r.pokok) + '</td>' +
@@ -381,6 +607,9 @@
     document.getElementById('infoLunas').textContent = 'Sudah dibayar: ' + lunas + ' dari ' + total + ' bulan';
     document.getElementById('infoDuit').textContent = 'Total dibayar ' + rupiah(totalDibayar) + ' / ' + rupiah(totalAngsuran) + ' · sisa ' + rupiah(totalAngsuran - totalDibayar);
     document.getElementById('bar').style.width = (total ? (lunas / total * 100) : 0) + '%';
+    setStat('statTotal', total ? rupiah(totalAngsuran) : '—', false);
+    setStat('statLunas', total ? lunas + ' / ' + total : '—', true);
+    setStat('statPct', (total ? Math.round(lunas / total * 100) : 0) + '%', true);
   }
 
   function mix(hex, target, t) {
@@ -394,20 +623,21 @@
 
   function applyTheme() {
     var p = PALETTES[state.tema] || PALETTES.biru;
+    var a = state.aksen || p.accent;
     var css = document.documentElement.style;
     ['bg', 'card', 'border', 'text'].forEach(function (k) { css.setProperty('--' + k, p[k]); });
     css.setProperty('--muted', mix(p.text, '#ffffff', 0.42));
-    css.setProperty('--shadow', '0 6px 20px ' + mix(p.accent, '#ffffff', 0.82));
+    css.setProperty('--ink', mix(p.text, '#000000', 0.34));
+    css.setProperty('--accent-soft', mix(a, '#ffffff', 0.89));
+    css.setProperty('--shadow', '0 12px 30px ' + mix(a, '#ffffff', 0.86));
     if (state.aksen) {
       css.setProperty('--accent', state.aksen);
-      css.setProperty('--head', mix(state.aksen, '#ffffff', 0.74));
-      css.setProperty('--alt', mix(state.aksen, '#ffffff', 0.93));
-      css.setProperty('--lunas', mix(state.aksen, '#ffffff', 0.82));
+      css.setProperty('--head', mix(state.aksen, '#ffffff', 0.78));
+      css.setProperty('--alt', mix(state.aksen, '#ffffff', 0.94));
     } else {
       css.setProperty('--accent', p.accent);
       css.setProperty('--head', p.head);
       css.setProperty('--alt', p.alt);
-      css.setProperty('--lunas', mix(p.accent, '#ffffff', 0.86));
     }
     document.querySelectorAll('.swatch').forEach(function (el) {
       el.classList.toggle('aktif', el.getAttribute('data-tema') === state.tema && !state.aksen);
@@ -451,7 +681,7 @@
     if (!/^\d{4}-\d{2}-\d{2}$/.test(p.mulai)) { alert('Pilih bulan angsuran pertama.'); return; }
     state.rows = buatJadwal(p, state.rows);
     save();
-    renderTable();
+    renderTable(true);
     renderSummary();
   });
 
@@ -462,7 +692,7 @@
     save();
     initForm();
     applyTheme();
-    renderTable();
+    renderTable(true);
     renderSummary();
   });
 
@@ -571,7 +801,7 @@
         save();
         initForm();
         applyTheme();
-        renderTable();
+        renderTable(true);
         renderSummary();
         alert('Data berhasil dimuat.');
       } catch (err) {
@@ -583,6 +813,21 @@
   });
 
   document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
+
+  var reveals = document.querySelectorAll('.reveal');
+  if (reduce() || !('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: .06, rootMargin: '0px 0px -24px 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
 
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     navigator.serviceWorker.register('./sw.js').catch(function () {});
