@@ -1,838 +1,761 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f4f7fb">
-<title>Tabel KPR Bulanan</title>
-<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
-<style>
-  :root {
-    --bg: #f4f7fb;
-    --card: #ffffff;
-    --head: #e8f0fb;
-    --alt: #f8fbff;
-    --border: #dbe6f4;
-    --text: #26364a;
-    --ink: #142438;
-    --muted: #718098;
-    --accent: #2f6fb0;
-    --accent-soft: #e7f0fa;
-    --lunas: #e6f5ed;
-    --ok: #2e9e63;
-    --shadow: 0 12px 30px rgba(30, 60, 110, .08);
-    --radius: 16px;
-    --ease: cubic-bezier(.2, .7, .2, 1);
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    padding: 0 16px 54px;
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.55;
-    transition: background-color .4s var(--ease), color .4s var(--ease);
-  }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0 0 auto 0;
-    height: 340px;
-    background: radial-gradient(820px 240px at 50% -60px, var(--accent-soft), transparent 72%);
-    pointer-events: none;
-    z-index: -1;
-    opacity: .95;
-  }
-  .wrap { max-width: 1180px; margin: 0 auto; }
 
-  /* Hero */
-  .hero {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 22px;
-    padding: 40px 4px 26px;
-  }
-  .brand { display: flex; align-items: center; gap: 15px; }
-  .mark {
-    width: 54px; height: 54px;
-    border-radius: 16px;
-    background: var(--accent);
-    color: #fff;
-    display: grid; place-items: center;
-    flex: 0 0 auto;
-    box-shadow: 0 10px 22px rgba(47, 111, 176, .28);
-  }
-  .mark svg { width: 28px; height: 28px; display: block; }
-  h1 {
-    margin: 0;
-    font-size: clamp(24px, 3.2vw, 34px);
-    line-height: 1.14;
-    letter-spacing: -.025em;
-    font-weight: 750;
-    color: var(--ink);
-  }
-  .sub { margin: 6px 0 0; color: var(--muted); font-size: 13px; max-width: 58ch; }
-  .stats { display: flex; flex-wrap: wrap; gap: 9px; }
-  .stat {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 13px;
-    padding: 10px 15px;
-    min-width: 116px;
-    box-shadow: var(--shadow);
-  }
-  .stat .k {
-    display: block;
-    font-size: 9.5px;
-    text-transform: uppercase;
-    letter-spacing: .09em;
-    font-weight: 800;
-    color: var(--muted);
-  }
-  .stat .v {
-    display: block;
-    margin-top: 3px;
-    font-size: 18px;
-    font-weight: 750;
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-  }
-  .stat .v.small { font-size: 13px; }
-  .stat.pct .v { color: var(--accent); }
-  .stat.bump { animation: bump .45s var(--ease); }
-  @keyframes bump { 0% { transform: scale(1); } 35% { transform: scale(1.06); } 100% { transform: scale(1); } }
-
-  /* Cards */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px;
-    margin: 0 0 16px;
-    box-shadow: var(--shadow);
-    transition: background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .4s var(--ease);
-  }
-  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-  .step {
-    width: 27px; height: 27px;
-    border-radius: 9px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    display: grid; place-items: center;
-    font-weight: 800; font-size: 12px;
-    flex: 0 0 auto;
-  }
-  .card h2 { margin: 0; font-size: 16px; letter-spacing: -.01em; color: var(--ink); }
-  .card-note { margin-left: auto; font-size: 11px; color: var(--muted); }
-
-  /* Forms */
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 14px; }
-  label.field {
-    display: flex; flex-direction: column; gap: 6px;
-    font-size: 10.5px; color: var(--muted);
-    font-weight: 750; letter-spacing: .05em; text-transform: uppercase;
-  }
-  input, select {
-    width: 100%;
-    padding: 11px 12px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--alt);
-    color: var(--text);
-    font: inherit;
-    font-size: 14px;
-    text-transform: none;
-    letter-spacing: normal;
-    transition: border-color .2s, box-shadow .2s, background-color .2s;
-  }
-  input:hover, select:hover { border-color: var(--accent); }
-  input:focus-visible, select:focus-visible {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-    background: var(--card);
-  }
-  .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
-  button, .file-btn {
-    border: 1px solid var(--accent);
-    background: var(--accent);
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 10px;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 650;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    box-shadow: 0 4px 12px rgba(47, 111, 176, .18);
-    transition: transform .18s var(--ease), box-shadow .18s var(--ease), filter .18s,
-                background-color .2s, border-color .2s, color .2s;
-  }
-  button:hover, .file-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(47, 111, 176, .26); filter: brightness(1.03); }
-  button:active, .file-btn:active { transform: translateY(0); }
-  button:focus-visible, .file-btn:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
-  button.ghost, .file-btn.ghost {
-    background: var(--card); color: var(--text);
-    border-color: var(--border); box-shadow: none;
-  }
-  button.ghost:hover, .file-btn.ghost:hover {
-    border-color: var(--accent); color: var(--accent);
-    box-shadow: 0 6px 14px rgba(47, 111, 176, .10);
-  }
-  .hint { margin: 13px 0 0; color: var(--muted); font-size: 12px; }
-
-  /* Palette */
-  .palette { display: flex; flex-wrap: wrap; gap: 9px; }
-  .swatch {
-    background: var(--head);
-    color: var(--text);
-    border: 2px solid transparent;
-    padding: 8px 12px;
-  }
-  .swatch span { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(255, 255, 255, .75); }
-  .swatch.aktif { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  label.inline {
-    flex-direction: row; align-items: center; gap: 12px;
-    margin-top: 16px; text-transform: none; letter-spacing: normal; font-size: 12px;
-  }
-  .inline input[type="color"] { width: 58px; height: 38px; padding: 3px; border-radius: 10px; cursor: pointer; flex: 0 0 auto; }
-
-  /* Progress */
-  .head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .head-row .card-head { margin-bottom: 8px; }
-  .head-row .actions { margin-top: 0; }
-  .progress-wrap { margin: 10px 0 18px; }
-  .progress-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-  .progress {
-    height: 10px;
-    background: var(--alt);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .progress > div {
-    height: 100%; width: 0;
-    background: var(--accent);
-    border-radius: 99px;
-    position: relative;
-    transition: width .55s var(--ease), background-color .4s var(--ease);
-  }
-  .progress > div::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 2.6s infinite;
-  }
-  @keyframes shimmer { 100% { transform: translateX(100%); } }
-
-  /* Table */
-  .table-scroll { overflow: auto; max-height: 62vh; border: 1px solid var(--border); border-radius: 12px; }
-  table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 960px; font-size: 13px; }
-  th, td { padding: 11px 12px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
-  thead th {
-    background: var(--head);
-    color: var(--ink);
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    position: sticky; top: 0; z-index: 2;
-    box-shadow: 0 1px 0 var(--border);
-  }
-  tbody tr { transition: background-color .2s, filter .2s; --i: 0; }
-  tbody tr:hover, tbody tr:nth-child(even):hover { background: var(--accent-soft); }
-  tbody tr:nth-child(even) { background: var(--alt); }
-  tbody tr.lunas { background: var(--lunas); }
-  tbody tr:last-child td { border-bottom: 0; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; }
-  td small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
-  td .dibayar, td .catatan { min-width: 110px; padding: 7px 9px; background: var(--card); border-radius: 8px; }
-  td .catatan { min-width: 140px; }
-  .status {
-    flex-direction: row; align-items: center; gap: 7px;
-    white-space: nowrap; cursor: pointer; font-size: 12px;
-    color: inherit; font-weight: 600; text-transform: none; letter-spacing: normal;
-  }
-  .status input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex: 0 0 auto; }
-  .lunas .status span { color: var(--ok); font-weight: 750; }
-  .kosong { text-align: center; color: var(--muted); padding: 36px 12px; white-space: normal; }
-  .badge { display: inline-block; padding: 4px 10px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 750; }
-  .tbl-enter tr { animation: rowIn .34s var(--ease) both; animation-delay: calc(var(--i) * 16ms); }
-  @keyframes rowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-
-  /* Reveal */
-  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s var(--ease), transform .55s var(--ease); }
-  .reveal.in { opacity: 1; transform: none; }
-
-  .foot { text-align: center; color: var(--muted); font-size: 11px; padding: 16px 8px 0; }
-
-  @media (max-width: 680px) {
-    body { padding: 0 11px 40px; }
-    .hero { padding: 28px 2px 20px; }
-    .stats { width: 100%; }
-    .stat { flex: 1 1 30%; min-width: 0; }
-    .card { padding: 16px; border-radius: 14px; }
-    .card-note { display: none; }
-    .actions button, .actions .file-btn { flex: 1 1 auto; justify-content: center; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after {
-      animation-duration: .01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: .01ms !important;
-    }
-    .reveal { opacity: 1; transform: none; }
-  }
-  @media print {
-    body { background: #fff; padding: 0; }
-    body::before { display: none; }
-    .card { box-shadow: none; break-inside: avoid; }
-    button, .file-btn, .palette, .inline, .actions, .stats, .mark { display: none !important; }
-    .reveal { opacity: 1; transform: none; }
-    th { position: static; }
-    .table-scroll { max-height: none; overflow: visible; }
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header class="hero">
-    <div class="brand reveal">
-      <div class="mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 10.5 12 3l9 7.5"></path>
-          <path d="M5.5 9.5V21h13V9.5"></path>
-          <path d="M9 21v-6h6v6"></path>
-          <path d="M9 12.5h6"></path>
-        </svg>
-      </div>
-      <div>
-        <h1>Tabel KPR Bulanan</h1>
-        <p class="sub">Jadwal angsuran per bulan · bisa diisi tanpa internet · data tersimpan otomatis di browser perangkat ini</p>
-      </div>
-    </div>
-    <div class="stats reveal" style="transition-delay:.08s" aria-label="Ringkasan pembayaran">
-      <div class="stat"><span class="k">Total angsuran</span><span class="v small" id="statTotal">—</span></div>
-      <div class="stat"><span class="k">Bulan lunas</span><span class="v" id="statLunas">—</span></div>
-      <div class="stat pct"><span class="k">Progres</span><span class="v" id="statPct">0%</span></div>
-    </div>
-  </header>
-
-  <section class="card reveal">
-    <div class="card-head"><span class="step">1</span><h2>Data Pinjaman</h2><span class="card-note">Langkah awal</span></div>
-    <div class="grid">
-      <label class="field">Nama pinjaman
-        <input id="nama" type="text" placeholder="Contoh: KPR Rumah Pertama">
-      </label>
-      <label class="field">Pokok pinjaman (Rp)
-        <input id="pokok" type="number" min="0" step="1000" placeholder="500000000">
-      </label>
-      <label class="field">Bunga per tahun (%)
-        <input id="bunga" type="number" min="0" step="0.01" placeholder="6.5">
-      </label>
-      <label class="field">Tenor (bulan)
-        <input id="tenor" type="number" min="1" step="1" placeholder="240">
-      </label>
-      <label class="field">Bulan angsuran pertama
-        <input id="mulai" type="date">
-      </label>
-      <label class="field">Metode angsuran
-        <select id="metode">
-          <option value="anuitas">Anuitas (angsuran tetap)</option>
-          <option value="flat">Flat (pokok tetap)</option>
-        </select>
-      </label>
-    </div>
-    <div class="actions">
-      <button id="btnBuat">Buat / Perbarui Jadwal</button>
-      <button id="btnReset" class="ghost">Reset Semua</button>
-    </div>
-    <p class="hint" id="ringkasan"></p>
-  </section>
-
-  <section class="card reveal">
-    <div class="card-head"><span class="step">2</span><h2>Personalisasi Warna</h2><span class="card-note">Pilih nuansa</span></div>
-    <div class="palette" id="palette"></div>
-    <label class="field inline">Atau warna aksen kustom
-      <input type="color" id="warnaKustom" value="#2f6fb0">
-    </label>
-    <div class="actions">
-      <button id="btnThemeReset" class="ghost">Kembali ke pastel bawaan</button>
-    </div>
-  </section>
-
-  <section class="card reveal">
-    <div class="head-row">
-      <div>
-        <div class="card-head"><span class="step">3</span><h2>Jadwal &amp; Pembayaran</h2></div>
-        <div class="hint" id="judulPinjaman"></div>
-      </div>
-      <div class="actions" style="margin-top:0">
-        <button id="btnLunasBulanIni" class="ghost">Tandai s.d. bulan ini</button>
-        <button id="btnLunasDibayar" class="ghost">Tandai yang dibayar</button>
-        <button id="btnSemuaLunas" class="ghost">Semua lunas</button>
-        <button id="btnBatalSemua" class="ghost">Batalkan semua</button>
-      </div>
-    </div>
-
-    <div class="progress-wrap">
-      <div class="progress-info">
-        <span id="infoLunas"></span>
-        <span id="infoDuit"></span>
-      </div>
-      <div class="progress"><div id="bar"></div></div>
-    </div>
-
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Bulan ke-</th>
-            <th scope="col">Periode</th>
-            <th scope="col" style="text-align:right">Pokok</th>
-            <th scope="col" style="text-align:right">Bunga</th>
-            <th scope="col" style="text-align:right">Angsuran</th>
-            <th scope="col" style="text-align:right">Dibayar (Rp)</th>
-            <th scope="col" style="text-align:right">Sisa Pokok</th>
-            <th scope="col">Status</th>
-            <th scope="col">Catatan</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-
-    <div class="actions">
-      <button id="btnCsv" class="ghost">Ekspor CSV</button>
-      <button id="btnJson" class="ghost">Cadangkan JSON</button>
-      <label class="file-btn ghost">Impor JSON<input type="file" id="imporJson" accept="application/json,.json" hidden></label>
-      <button id="btnPrint" class="ghost">Cetak</button>
-    </div>
-    <p class="hint">Kolom <b>Dibayar</b> dan <b>Catatan</b> bisa diedit langsung. Centang <b>Sudah dibayar</b> untuk menandai lunas. Semua perubahan tersimpan otomatis.</p>
-  </section>
-
-  <p class="foot">Data disimpan lokal di browser ini · gunakan Cadangkan JSON untuk pindah perangkat</p>
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-tertiary-container":"#009668","surface-variant":"#e4e2e4","on-tertiary-fixed":"#002113","on-secondary-fixed-variant":"#003ea8","on-secondary":"#ffffff","on-primary-fixed":"#131b2e","surface-container-high":"#eae7e9","primary-fixed-dim":"#bec6e0","primary-fixed":"#dae2fd","surface-container-highest":"#e4e2e4","background":"#fcf8fa","on-primary-container":"#7c839b","on-secondary-container":"#fefcff","primary-container":"#131b2e","surface-dim":"#dcd9db","inverse-primary":"#bec6e0","inverse-on-surface":"#f3f0f2","secondary-fixed":"#dbe1ff","tertiary-fixed":"#6ffbbe","error":"#ba1a1a","on-primary-fixed-variant":"#3f465c","secondary-fixed-dim":"#b4c5ff","secondary":"#0051d5","tertiary-container":"#002113","tertiary":"#000000","on-tertiary-fixed-variant":"#005236","on-secondary-fixed":"#00174b","on-background":"#1b1b1d","surface":"#fcf8fa","error-container":"#ffdad6","surface-tint":"#565e74","on-tertiary":"#ffffff","surface-container-lowest":"#ffffff","on-surface":"#1b1b1d","tertiary-fixed-dim":"#4edea3","inverse-surface":"#303032","surface-bright":"#fcf8fa","outline-variant":"#c6c6cd","on-error-container":"#93000a","primary":"#000000","secondary-container":"#316bf3","on-error":"#ffffff","surface-container-low":"#f6f3f5","on-primary":"#ffffff","surface-container":"#f0edef","on-surface-variant":"#45464d","outline":"#76777d"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","gutter-desktop":"1.5rem","space-xl":"2.25rem","margin-desktop":"3rem","margin":"1rem","space-sm":"0.5rem","gutter":"1.25rem","space-lg":"1.5rem","margin-tablet":"2rem","space-md":"1rem"},"fontFamily":{"headline-sm":["Plus Jakarta Sans"],"data-metric":["Inter"],"headline-lg":["Plus Jakarta Sans"],"headline-xl-mobile":["Plus Jakarta Sans"],"label-sm":["Inter"],"label-md":["Inter"],"headline-md":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"body-lg":["Inter"],"data-tabular":["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-xl":["Plus Jakarta Sans"],"label-lg":["Inter"]},"fontSize":{"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"data-metric":["20px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-xl-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"0.01em","fontWeight":"700"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"data-tabular":["13px",{"lineHeight":"18px","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"20px","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between gap-4"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-primary-fixed text-[20px]">real_estate_agent</span></div><div><div class="flex items-center gap-2"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">KPR Amortize</span><span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-high text-on-tertiary-container font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-pulse"></span>Simulasi Aktif · Offline Ready</span></div><span class="block font-body-sm text-body-sm text-on-surface-variant leading-none mt-0.5">Kalkulator &amp; Jadwal Angsuran Bulanan</span></div></div><nav class="hidden lg:flex items-center gap-1" data-active-classes="bg-surface-container text-on-surface font-label-md rounded-lg"><a aria-current="page" class="px-3 py-1.5 transition-colors bg-surface-container text-on-surface font-label-md rounded-lg" data-path="simulasi-kpr" href="#">Simulasi Pokok</a><a class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md" data-path="jadwal-angsuran" href="#">Tabel Amortisasi</a><a class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md" data-path="komparasi-suku-bunga" href="#">Komparasi Bunga</a><a class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md" data-path="pelunasan-dipercepat" href="#">Pelunasan Ekstra</a></nav></div><div class="flex items-center gap-space-sm"><div class="hidden md:flex items-center gap-1.5"><button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all shadow-[0_1px_3px_rgba(0,0,0,0.03)]" type="button"><span class="material-symbols-outlined text-[16px]">file_download</span>Ekspor CSV</button><button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all shadow-[0_1px_3px_rgba(0,0,0,0.03)]" type="button"><span class="material-symbols-outlined text-[16px]">sync_saved_locally</span>Cadangkan JSON</button><button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary font-label-sm text-label-sm transition-all shadow-[0_1px_4px_rgba(0,81,213,0.2)]" type="button"><span class="material-symbols-outlined text-[16px]">print</span>Cetak</button></div><div class="h-5 w-px bg-surface-container-high hidden md:block mx-1"></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface"><div class="max-w-7xl mx-auto px-gutter-desktop py-space-lg"><div class="flex flex-col w-full pb-16 space-y-8">
+<!-- Top Banner / Application Context Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm tracking-wide uppercase">Fintech Mortgage Intelligence</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span> Tersinkron Lokal
+        </span>
 </div>
-
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Tabel KPR Bulanan</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+        Jadwal angsuran per bulan · bisa diisi tanpa internet · data tersimpan otomatis di browser perangkat ini
+      </p>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">verified_user</span> OJK &amp; BI Standard Model
+      </span>
+</div>
+</div>
+<!-- Credit Overview / Top Summary KPIs -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+<!-- Total Angsuran Card -->
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.02)] flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total Angsuran</span>
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</div>
+</div>
+<div class="font-data-metric text-data-metric text-on-surface" id="summary-total-angsuran">Rp 894.687.680</div>
+</div>
+<div class="pt-3 mt-2 border-t-0 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Pokok + Total Akumulasi Bunga</span>
+</div>
+</div>
+<!-- Bulan Lunas Card -->
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.02)] flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Bulan Lunas</span>
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">event_available</span>
+</div>
+</div>
+<div class="font-data-metric text-data-metric text-on-surface flex items-baseline gap-1.5">
+<span id="metric-paid-months">0</span>
+<span class="text-body-md font-body-md text-on-surface-variant">/ 240 Bulan</span>
+</div>
+</div>
+<div class="pt-3 mt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Tenor Total: 20 Tahun</span>
+<span class="font-semibold text-secondary">240 Sisa</span>
+</div>
+</div>
+<!-- Progres Pelunasan Card -->
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.02)] flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Progres Pelunasan</span>
+<span class="font-label-sm text-label-sm font-semibold text-secondary" id="kpi-percent-badge">0%</span>
+</div>
+<div class="font-data-metric text-data-metric text-on-surface" id="kpi-percent">0%</div>
+</div>
+<div class="pt-2">
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full transition-all duration-500 ease-out" id="kpi-progress-bar" style="width: 0%;"></div>
+</div>
+</div>
+</div>
+<!-- Cicilan Bulanan Detail Card -->
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.02)] flex flex-col justify-between">
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Cicilan Bulanan</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-tertiary-fixed text-on-tertiary-fixed">Fixed Anuitas</span>
+</div>
+<div class="font-data-metric text-data-metric text-on-surface">Rp 3.727.866 <span class="font-body-sm text-body-sm text-on-surface-variant">/bln</span></div>
+</div>
+<div class="pt-3 mt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Bunga: <strong class="text-on-surface">Rp 2.708.333</strong></span>
+<span>Pokok: <strong class="text-on-surface">Rp 1.019.533</strong></span>
+</div>
+</div>
+</div>
+<!-- SECTION 1: DATA PINJAMAN -->
+<div class="rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.02)] p-6 space-y-6">
+<div class="flex items-center justify-between pb-4 border-b border-surface-container">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-headline-sm text-headline-sm flex items-center justify-center">
+          1
+        </div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Data Pinjaman</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Konfigurasi parameter dasar pembiayaan rumah atau kredit Anda</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2.5 py-1 rounded-full">Langkah awal</span>
+</div>
+<!-- Parameter Inputs Form -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<!-- Nama Pinjaman -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md text-on-surface block">Nama Pinjaman</label>
+<div class="relative">
+<input class="w-full px-3.5 py-2.5 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary/40 transition-all placeholder:text-outline" id="input-loan-name" placeholder="cth. KPR Griya Mandiri" type="text" value="Contoh KPR Rumah"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-[18px] text-on-surface-variant">edit</span>
+</div>
+</div>
+<!-- Pokok Pinjaman (Rp) -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface">Pokok Pinjaman (Rp)</label>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Rp 500 Juta</span>
+</div>
+<div class="relative flex items-center">
+<span class="absolute left-3 font-label-md text-label-md text-on-surface-variant select-none">Rp</span>
+<input class="w-full pl-10 pr-3.5 py-2.5 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary/40 transition-all font-data-tabular" id="input-loan-amount" type="number" value="500000000"/>
+</div>
+</div>
+<!-- Bunga per Tahun (%) -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface">Bunga per Tahun (%)</label>
+<span class="font-label-sm text-label-sm text-on-tertiary-container bg-surface-container-high px-2 py-0.5 rounded">Promo Fix 3 Th</span>
+</div>
+<div class="relative flex items-center">
+<input class="w-full px-3.5 py-2.5 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary/40 transition-all font-data-tabular" id="input-loan-rate" step="0.1" type="number" value="6.5"/>
+<span class="absolute right-3 font-label-md text-label-md text-on-surface-variant select-none">%</span>
+</div>
+</div>
+<!-- Tenor (Bulan) -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface">Tenor (Bulan)</label>
+<span class="font-label-sm text-label-sm text-on-surface-variant" id="tenor-year-label">20 Tahun</span>
+</div>
+<div class="relative">
+<input class="w-full px-3.5 py-2.5 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary/40 transition-all font-data-tabular" id="input-loan-tenor" type="number" value="240"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-[18px] text-on-surface-variant">calendar_today</span>
+</div>
+</div>
+<!-- Bulan Angsuran Pertama -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md text-on-surface block">Bulan Angsuran Pertama</label>
+<div class="relative">
+<input class="w-full px-3.5 py-2.5 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary/40 transition-all font-data-tabular" id="input-loan-date" placeholder="MM/DD/YYYY" type="text" value="11/01/2026"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-[18px] text-on-surface-variant">calendar_month</span>
+</div>
+</div>
+<!-- Metode Angsuran -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md text-on-surface block">Metode Angsuran</label>
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center justify-center gap-2 p-2.5 rounded-lg bg-surface-container cursor-pointer select-none text-on-surface hover:bg-surface-container-high transition-colors text-label-sm font-label-sm has-[:checked]:bg-secondary-fixed has-[:checked]:text-on-secondary-fixed font-semibold">
+<input checked="" class="hidden" name="repayment_method" type="radio" value="anuitas"/>
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Anuitas (Tetap)</span>
+</label>
+<label class="flex items-center justify-center gap-2 p-2.5 rounded-lg bg-surface-container cursor-pointer select-none text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-sm font-label-sm has-[:checked]:bg-secondary-fixed has-[:checked]:text-on-secondary-fixed">
+<input class="hidden" name="repayment_method" type="radio" value="flat"/>
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span>Flat (Pokok Tetap)</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Action Buttons & Dynamic Summary Caption -->
+<div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-secondary hover:bg-on-secondary-fixed-variant active:scale-[0.99] text-on-secondary font-label-lg text-label-lg transition-all shadow-[0_1px_4px_rgba(0,81,213,0.2)] flex items-center justify-center gap-2" id="btn-recalculate" type="button">
+<span class="material-symbols-outlined text-[18px]">calculate</span>
+          Buat / Perbarui Jadwal
+        </button>
+<button class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg transition-all flex items-center justify-center gap-1.5" id="btn-reset-form" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+          Reset Semua
+        </button>
+</div>
+<div class="w-full sm:w-auto text-left sm:text-right">
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center sm:justify-end gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">info</span>
+          Pokok Rp 500.000.000 · bunga 6.5%/tahun · 240 bulan · total angsuran Rp 894.687.680
+        </p>
+</div>
+</div>
+</div>
+<!-- SECTION 2: PERSONALISASI WARNA -->
+<div class="rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.02)] p-6 space-y-5">
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface font-headline-sm text-headline-sm flex items-center justify-center">
+          2
+        </div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Personalisasi Warna</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Sesuaikan tema visual kartu dan jadwal kredit sesuai preferensi</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2.5 py-1 rounded-full">Pilih nuansa</span>
+</div>
+<!-- Color Palette Selection Chips -->
+<div class="flex flex-wrap items-center gap-2.5 pt-1">
+<!-- Biru (Active) -->
+<button class="color-chip group px-3.5 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md flex items-center gap-2 shadow-sm ring-2 ring-secondary/50" type="button">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary"></span>
+<span class="font-semibold">Biru</span>
+</button>
+<!-- Pink -->
+<button class="color-chip group px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-2 transition-all" type="button">
+<span class="w-3.5 h-3.5 rounded-full bg-[#f43f5e]"></span>
+<span>Pink</span>
+</button>
+<!-- Hijau -->
+<button class="color-chip group px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-2 transition-all" type="button">
+<span class="w-3.5 h-3.5 rounded-full bg-[#10b981]"></span>
+<span>Hijau</span>
+</button>
+<!-- Ungu -->
+<button class="color-chip group px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-2 transition-all" type="button">
+<span class="w-3.5 h-3.5 rounded-full bg-[#8b5cf6]"></span>
+<span>Ungu</span>
+</button>
+<!-- Kuning -->
+<button class="color-chip group px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-2 transition-all" type="button">
+<span class="w-3.5 h-3.5 rounded-full bg-[#f59e0b]"></span>
+<span>Kuning</span>
+</button>
+<!-- Peach -->
+<button class="color-chip group px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-2 transition-all" type="button">
+<span class="w-3.5 h-3.5 rounded-full bg-[#f97316]"></span>
+<span>Peach</span>
+</button>
+<!-- Abu -->
+<button class="color-chip group px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-2 transition-all" type="button">
+<span class="w-3.5 h-3.5 rounded-full bg-[#64748b]"></span>
+<span>Abu</span>
+</button>
+<!-- Custom Color Picker Box -->
+<div class="flex items-center gap-2 ml-2 pl-3 border-l-0">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Atau warna aksen kustom</span>
+<label class="w-7 h-7 rounded-lg bg-secondary cursor-pointer flex items-center justify-center overflow-hidden shadow-sm relative group">
+<input class="opacity-0 absolute inset-0 cursor-pointer" type="color" value="#0051d5"/>
+<span class="material-symbols-outlined text-white text-[14px]">colorize</span>
+</label>
+</div>
+<!-- Reset Color Scheme -->
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all ml-auto" type="button">
+        Kembali ke pastel bawaan
+      </button>
+</div>
+</div>
+<!-- SECTION 3: JADWAL & PEMBAYARAN -->
+<div class="rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.02)] p-6 space-y-6">
+<!-- Header with Step & Bulk Action Toolbar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-surface-container">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface font-headline-sm text-headline-sm flex items-center justify-center">
+          3
+        </div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Jadwal &amp; Pembayaran</h2>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+              Contoh KPR Rumah
+            </span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+            240 bulan · Anuitas · bunga 6.5% / tahun
+          </span>
+</div>
+</div>
+<!-- Bulk Action Buttons -->
+<div class="flex flex-wrap items-center gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1.5" id="btn-mark-to-current" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">today</span>
+          Tandai s.d. bulan ini
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1.5" id="btn-mark-paid" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container">done_all</span>
+          Tandai yang dibayar
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1.5" id="btn-mark-all-paid" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container">verified</span>
+          Semua lunas
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-error-container text-on-surface hover:text-on-error-container font-label-sm text-label-sm transition-all flex items-center gap-1.5" id="btn-cancel-all" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+          Batalkan semua
+        </button>
+</div>
+</div>
+<!-- Loan Progress Status Bar Detail -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">donut_large</span>
+<span class="font-label-md text-label-md text-on-surface" id="status-paid-text">Sudah dibayar: <strong class="text-secondary">0</strong> dari 240 bulan</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5">
+<span>Total dibayar: <strong class="text-on-surface font-semibold" id="status-paid-amount">Rp 0</strong> / Rp 894.687.680</span>
+<span class="text-outline-variant">·</span>
+<span>sisa: <strong class="text-on-surface" id="status-remaining-amount">Rp 894.687.680</strong></span>
+</div>
+</div>
+<!-- Full Responsive Amortization Schedule Data Table -->
+<div class="overflow-x-auto rounded-xl bg-surface-container-lowest">
+<table class="w-full text-left border-collapse" id="amortization-table">
+<thead>
+<tr class="bg-surface-container-high font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider select-none">
+<th class="py-3.5 px-4 font-semibold text-center w-16">Bulan Ke-</th>
+<th class="py-3.5 px-4 font-semibold">Periode</th>
+<th class="py-3.5 px-4 font-semibold text-right">Pokok</th>
+<th class="py-3.5 px-4 font-semibold text-right">Bunga</th>
+<th class="py-3.5 px-4 font-semibold text-right">Angsuran</th>
+<th class="py-3.5 px-4 font-semibold text-center w-40">Dibayar (Rp)</th>
+<th class="py-3.5 px-4 font-semibold text-right">Sisa Pokok</th>
+<th class="py-3.5 px-4 font-semibold text-center">Status</th>
+<th class="py-3.5 px-4 font-semibold w-48">Catatan</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high font-body-sm text-body-sm">
+<!-- Row 1 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="498980467" data-installment="3727866" data-interest="2708333" data-month="1" data-principal="1019533">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">1</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Nov 2026</div>
+<div class="text-[11px] text-on-surface-variant">2026-11-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.019.533</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.708.333</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 498.980.467</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="497955412" data-installment="3727866" data-interest="2702811" data-month="2" data-principal="1025055">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">2</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Des 2026</div>
+<div class="text-[11px] text-on-surface-variant">2026-12-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.025.055</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.702.811</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 497.955.412</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="496924804" data-installment="3727866" data-interest="2697258" data-month="3" data-principal="1030608">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">3</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Jan 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-01-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.030.608</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.697.258</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 496.924.804</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="495888614" data-installment="3727866" data-interest="2691676" data-month="4" data-principal="1036190">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">4</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Feb 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-02-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.036.190</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.691.676</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 495.888.614</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="494846811" data-installment="3727866" data-interest="2686063" data-month="5" data-principal="1041803">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">5</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Mar 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-03-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.041.803</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.686.063</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 494.846.811</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="493799365" data-installment="3727866" data-interest="2680420" data-month="6" data-principal="1047446">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">6</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Apr 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-04-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.047.446</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.680.420</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 493.799.365</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 7 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="492746246" data-installment="3727866" data-interest="2674747" data-month="7" data-principal="1053119">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">7</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Mei 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-05-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.053.119</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.674.747</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 492.746.246</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 8 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="491687422" data-installment="3727866" data-interest="2669042" data-month="8" data-principal="1058824">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">8</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Jun 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-06-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.058.824</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.669.042</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 491.687.422</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 9 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="490622863" data-installment="3727866" data-interest="2663307" data-month="9" data-principal="1064559">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">9</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Jul 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-07-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.064.559</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.663.307</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 490.622.863</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+<!-- Row 10 -->
+<tr class="table-row group hover:bg-surface-container-low transition-colors" data-balance="489552537" data-installment="3727866" data-interest="2657540" data-month="10" data-principal="1070326">
+<td class="py-3.5 px-4 text-center font-data-tabular font-medium text-on-surface">10</td>
+<td class="py-3.5 px-4">
+<div class="font-medium text-on-surface">Agu 2027</div>
+<div class="text-[11px] text-on-surface-variant">2027-08-01</div>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface">Rp 1.070.326</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface-variant">Rp 2.657.540</td>
+<td class="py-3.5 px-4 text-right font-data-tabular font-bold text-on-surface">Rp 3.727.866</td>
+<td class="py-3.5 px-4">
+<input class="input-paid w-full px-2.5 py-1.5 bg-surface-container-low focus:bg-surface-container-lowest rounded font-data-tabular text-right text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary/40 transition-all" type="text" value="0"/>
+</td>
+<td class="py-3.5 px-4 text-right font-data-tabular text-on-surface font-medium">Rp 489.552.537</td>
+<td class="py-3.5 px-4 text-center">
+<label class="status-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant cursor-pointer text-[12px] font-medium transition-colors select-none">
+<input class="row-checkbox rounded text-secondary focus:ring-0" type="checkbox"/>
+<span class="status-label">Belum dibayar</span>
+</label>
+</td>
+<td class="py-3.5 px-4">
+<input class="w-full px-2.5 py-1.5 bg-transparent hover:bg-surface-container-low focus:bg-surface-container-lowest rounded text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none transition-all" placeholder="catatan..." type="text"/>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Action Bar / Quick Export & Backup -->
+<div class="pt-2 flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-2">
+<button class="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">download</span>
+          Ekspor CSV
+        </button>
+<button class="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">cloud_download</span>
+          Cadangkan JSON
+        </button>
+<button class="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">upload_file</span>
+          Impor JSON
+        </button>
+<button class="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">print</span>
+          Cetak
+        </button>
+</div>
+<div class="text-right">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Menampilkan 10 dari 240 baris jadwal pinjaman</span>
+</div>
+</div>
+<!-- Micro Privacy & Inline Storage Instruction Note -->
+<div class="p-4 rounded-xl bg-surface-container-low text-on-surface-variant font-body-sm text-body-sm space-y-1">
+<p class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">info</span>
+<span>Kolom <strong class="text-on-surface">Dibayar</strong> dan <strong class="text-on-surface">Catatan</strong> bisa diedit langsung. Centang <strong class="text-on-surface">Sudah dibayar</strong> untuk menandai lunas. Semua perubahan tersimpan otomatis.</span>
+</p>
+<p class="pl-6 text-[12px] text-outline">
+        Data disimpan lokal di browser ini · gunakan Cadangkan JSON untuk pindah perangkat
+      </p>
+</div>
+</div>
+</div>
 <script>
-(function () {
-  'use strict';
+  (function initKprDashboard() {
+    const totalInstallmentTarget = 894687680;
+    const totalMonths = 240;
+    const monthlyInstallment = 3727866;
 
-  var KEY = 'kpr-bulanan-v1';
+    const rows = document.querySelectorAll('.table-row');
+    const metricPaidMonths = document.getElementById('metric-paid-months');
+    const kpiPercent = document.getElementById('kpi-percent');
+    const kpiPercentBadge = document.getElementById('kpi-percent-badge');
+    const kpiProgressBar = document.getElementById('kpi-progress-bar');
+    const statusPaidText = document.getElementById('status-paid-text');
+    const statusPaidAmount = document.getElementById('status-paid-amount');
+    const statusRemainingAmount = document.getElementById('status-remaining-amount');
 
-  var PALETTES = {
-    biru:   { label: 'Biru',   bg: '#f4f7fb', card: '#ffffff', head: '#e8f0fb', alt: '#f8fbff', border: '#dbe6f4', text: '#26364a', accent: '#2f6fb0' },
-    pink:   { label: 'Pink',   bg: '#fdf4f7', card: '#ffffff', head: '#fbe6ef', alt: '#fff8fb', border: '#f4dbe7', text: '#4a3340', accent: '#c05a83' },
-    hijau:  { label: 'Hijau',  bg: '#f3f9f4', card: '#ffffff', head: '#e2f2e6', alt: '#f8fdf9', border: '#d8ebdd', text: '#2c4534', accent: '#3d8a55' },
-    ungu:   { label: 'Ungu',   bg: '#f7f4fc', card: '#ffffff', head: '#ece3fa', alt: '#fbf8ff', border: '#e4daf3', text: '#3c3350', accent: '#7a5bb5' },
-    kuning: { label: 'Kuning', bg: '#fdfaf0', card: '#ffffff', head: '#f9efcf', alt: '#fffcf2', border: '#f0e5c4', text: '#4a422c', accent: '#b8912f' },
-    peach:  { label: 'Peach',  bg: '#fdf6f1', card: '#ffffff', head: '#fae7d8', alt: '#fffaf6', border: '#f2dfd0', text: '#4d3a30', accent: '#c47a4e' },
-    abu:    { label: 'Abu',    bg: '#f5f7f8', card: '#ffffff', head: '#e8edf0', alt: '#fafbfc', border: '#dde4e8', text: '#37424a', accent: '#5f7382' }
-  };
-
-  function reduce() {
-    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  }
-
-  function bump(el) {
-    if (reduce()) return;
-    el.classList.remove('bump');
-    void el.offsetWidth;
-    el.classList.add('bump');
-  }
-
-  function setStat(id, value, pulse) {
-    var el = document.getElementById(id);
-    if (!el || el.textContent === value) return;
-    el.textContent = value;
-    if (pulse) bump(el);
-  }
-
-  function bulanIni() {
-    var d = new Date();
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-  }
-
-  function defaultState() {
-    return {
-      pinjaman: {
-        nama: 'Contoh KPR Rumah',
-        pokok: 500000000,
-        bunga: 6.5,
-        tenor: 240,
-        mulai: bulanIni() + '-01',
-        metode: 'anuitas'
-      },
-      rows: [],
-      tema: 'biru',
-      aksen: ''
-    };
-  }
-
-  var state = load();
-
-  function load() {
-    try {
-      var raw = localStorage.getItem(KEY);
-      if (!raw) {
-        var s = defaultState();
-        s.rows = buatJadwal(s.pinjaman, []);
-        return s;
-      }
-      var parsed = JSON.parse(raw);
-      return {
-        pinjaman: Object.assign(defaultState().pinjaman, parsed.pinjaman || {}),
-        rows: Array.isArray(parsed.rows) ? parsed.rows : [],
-        tema: PALETTES[parsed.tema] ? parsed.tema : 'biru',
-        aksen: /^#[0-9a-f]{6}$/i.test(parsed.aksen || '') ? parsed.aksen : ''
-      };
-    } catch (err) {
-      return defaultState();
+    function formatRupiah(num) {
+      return 'Rp ' + Number(num).toLocaleString('id-ID');
     }
-  }
 
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (err) {}
-  }
+    function recalculateMetrics() {
+      let paidMonths = 0;
+      let totalPaid = 0;
 
-  function rupiah(n) {
-    if (isNaN(n)) n = 0;
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Math.round(n));
-  }
+      rows.forEach(row => {
+        const checkbox = row.querySelector('.row-checkbox');
+        const inputPaid = row.querySelector('.input-paid');
+        const statusLabel = row.querySelector('.status-label');
+        const statusPill = row.querySelector('.status-pill');
 
-  function escapeAttr(s) {
-    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-
-  function geserBulan(tanggal, offset) {
-    var p = String(tanggal).split('-');
-    var y = parseInt(p[0], 10), m = parseInt(p[1], 10), d = parseInt(p[2], 10);
-    if (!y || !m || !d) { y = new Date().getFullYear(); m = new Date().getMonth() + 1; d = 1; }
-    var index = y * 12 + (m - 1) + offset;
-    var yy = Math.floor(index / 12), mm = (index % 12) + 1;
-    return yy + '-' + String(mm).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-  }
-
-  function formatPeriode(tanggal) {
-    var p = String(tanggal).split('-');
-    var nama = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-    var m = parseInt(p[1], 10) - 1;
-    return (nama[m] || '?') + ' ' + p[0];
-  }
-
-  function buatJadwal(p, lama) {
-    var pokok = Math.max(0, Math.round(Number(p.pokok) || 0));
-    var tenor = Math.max(1, Math.floor(Number(p.tenor) || 0));
-    var i = (Math.max(0, Number(p.bunga) || 0) / 100) / 12;
-    var angsuranTetap = i === 0 ? pokok / tenor : pokok * i / (1 - Math.pow(1 + i, -tenor));
-    var saldo = pokok;
-    var hasil = [];
-
-    for (var b = 0; b < tenor; b++) {
-      var bunga = Math.round(saldo * i);
-      var pokokBayar = p.metode === 'flat' ? Math.round(pokok / tenor) : Math.round(angsuranTetap - bunga);
-      var angsuran = pokokBayar + bunga;
-      if (b === tenor - 1) {
-        pokokBayar = saldo;
-        angsuran = pokokBayar + bunga;
-      }
-      pokokBayar = Math.max(0, Math.min(pokokBayar, saldo));
-      saldo = Math.max(0, saldo - pokokBayar);
-      var old = lama[b] || {};
-      hasil.push({
-        tanggal: geserBulan(p.mulai, b),
-        pokok: pokokBayar,
-        bunga: bunga,
-        angsuran: angsuran,
-        dibayar: Number(old.dibayar) || 0,
-        saldo: saldo,
-        lunas: !!old.lunas,
-        catatan: old.catatan || ''
-      });
-    }
-    return hasil;
-  }
-
-  function initForm() {
-    ['nama', 'pokok', 'bunga', 'tenor', 'mulai', 'metode'].forEach(function (id) {
-      document.getElementById(id).value = state.pinjaman[id];
-    });
-  }
-
-  function renderTable(animate) {
-    var tbody = document.getElementById('tbody');
-    tbody.classList.toggle('tbl-enter', !!animate && !reduce());
-    if (!state.rows.length) {
-      tbody.innerHTML = '<tr><td colspan="9" class="kosong">Belum ada jadwal. Isi data pinjaman lalu klik “Buat / Perbarui Jadwal”.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = state.rows.map(function (r, idx) {
-      return '<tr class="' + (r.lunas ? 'lunas' : '') + '" data-i="' + idx + '" style="--i:' + idx + '">' +
-        '<td class="num">' + (idx + 1) + '</td>' +
-        '<td>' + formatPeriode(r.tanggal) + '<small>' + escapeAttr(r.tanggal) + '</small></td>' +
-        '<td class="num">' + rupiah(r.pokok) + '</td>' +
-        '<td class="num">' + rupiah(r.bunga) + '</td>' +
-        '<td class="num"><b>' + rupiah(r.angsuran) + '</b></td>' +
-        '<td class="num"><input class="dibayar" type="number" min="0" step="1000" value="' + (Number(r.dibayar) || 0) + '"></td>' +
-        '<td class="num">' + rupiah(r.saldo) + '</td>' +
-        '<td><label class="status"><input class="cek" type="checkbox" ' + (r.lunas ? 'checked' : '') + '><span>' + (r.lunas ? 'Sudah dibayar' : 'Belum dibayar') + '</span></label></td>' +
-        '<td><input class="catatan" type="text" value="' + escapeAttr(r.catatan) + '" placeholder="catatan..."></td>' +
-        '</tr>';
-    }).join('');
-  }
-
-  function renderSummary() {
-    var total = state.rows.length;
-    var lunas = state.rows.filter(function (r) { return r.lunas; }).length;
-    var totalAngsuran = state.rows.reduce(function (a, r) { return a + (Number(r.angsuran) || 0); }, 0);
-    var totalDibayar = state.rows.reduce(function (a, r) { return a + (Number(r.dibayar) || 0); }, 0);
-    var p = state.pinjaman;
-
-    document.getElementById('judulPinjaman').innerHTML = p.nama
-      ? '<span class="badge">' + escapeAttr(p.nama) + '</span> &nbsp;' + total + ' bulan · ' +
-        (p.metode === 'flat' ? 'Flat' : 'Anuitas') + ' · bunga ' + (Number(p.bunga) || 0) + '% / tahun'
-      : '';
-    document.getElementById('ringkasan').textContent = total
-      ? 'Pokok ' + rupiah(p.pokok) + ' · bunga ' + (Number(p.bunga) || 0) + '%/tahun · ' + total + ' bulan · total angsuran ' + rupiah(totalAngsuran)
-      : 'Belum ada jadwal.';
-    document.getElementById('infoLunas').textContent = 'Sudah dibayar: ' + lunas + ' dari ' + total + ' bulan';
-    document.getElementById('infoDuit').textContent = 'Total dibayar ' + rupiah(totalDibayar) + ' / ' + rupiah(totalAngsuran) + ' · sisa ' + rupiah(totalAngsuran - totalDibayar);
-    document.getElementById('bar').style.width = (total ? (lunas / total * 100) : 0) + '%';
-    setStat('statTotal', total ? rupiah(totalAngsuran) : '—', false);
-    setStat('statLunas', total ? lunas + ' / ' + total : '—', true);
-    setStat('statPct', (total ? Math.round(lunas / total * 100) : 0) + '%', true);
-  }
-
-  function mix(hex, target, t) {
-    var h = hex.replace('#', '');
-    var a = [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
-    var b = [parseInt(target.slice(1, 3), 16), parseInt(target.slice(3, 5), 16), parseInt(target.slice(5, 7), 16)];
-    return '#' + a.map(function (v, k) {
-      return Math.round(v * (1 - t) + b[k] * t).toString(16).padStart(2, '0');
-    }).join('');
-  }
-
-  function applyTheme() {
-    var p = PALETTES[state.tema] || PALETTES.biru;
-    var a = state.aksen || p.accent;
-    var css = document.documentElement.style;
-    ['bg', 'card', 'border', 'text'].forEach(function (k) { css.setProperty('--' + k, p[k]); });
-    css.setProperty('--muted', mix(p.text, '#ffffff', 0.42));
-    css.setProperty('--ink', mix(p.text, '#000000', 0.34));
-    css.setProperty('--accent-soft', mix(a, '#ffffff', 0.89));
-    css.setProperty('--shadow', '0 12px 30px ' + mix(a, '#ffffff', 0.86));
-    if (state.aksen) {
-      css.setProperty('--accent', state.aksen);
-      css.setProperty('--head', mix(state.aksen, '#ffffff', 0.78));
-      css.setProperty('--alt', mix(state.aksen, '#ffffff', 0.94));
-    } else {
-      css.setProperty('--accent', p.accent);
-      css.setProperty('--head', p.head);
-      css.setProperty('--alt', p.alt);
-    }
-    document.querySelectorAll('.swatch').forEach(function (el) {
-      el.classList.toggle('aktif', el.getAttribute('data-tema') === state.tema && !state.aksen);
-    });
-    document.getElementById('warnaKustom').value = state.aksen || p.accent;
-  }
-
-  function unduh(nama, isi, tipe) {
-    var blob = new Blob([isi], { type: tipe });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = nama;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-  }
-
-  document.getElementById('palette').innerHTML = Object.keys(PALETTES).map(function (k) {
-    var p = PALETTES[k];
-    return '<button class="swatch" data-tema="' + k + '" style="background:' + p.head + '"><span style="background:' + p.accent + '"></span>' + p.label + '</button>';
-  }).join('');
-
-  initForm();
-  applyTheme();
-  renderTable();
-  renderSummary();
-
-  ['nama', 'pokok', 'bunga', 'tenor', 'mulai', 'metode'].forEach(function (id) {
-    document.getElementById(id).addEventListener('input', function (e) {
-      state.pinjaman[id] = e.target.value;
-      save();
-    });
-  });
-
-  document.getElementById('btnBuat').addEventListener('click', function () {
-    var p = state.pinjaman;
-    if (!(Number(p.pokok) > 0)) { alert('Isi pokok pinjaman dengan angka lebih dari 0.'); return; }
-    if (!(Number(p.tenor) >= 1)) { alert('Isi tenor minimal 1 bulan.'); return; }
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(p.mulai)) { alert('Pilih bulan angsuran pertama.'); return; }
-    state.rows = buatJadwal(p, state.rows);
-    save();
-    renderTable(true);
-    renderSummary();
-  });
-
-  document.getElementById('btnReset').addEventListener('click', function () {
-    if (!confirm('Reset semua data pinjaman, jadwal, dan status pembayaran?')) return;
-    state = defaultState();
-    state.rows = buatJadwal(state.pinjaman, []);
-    save();
-    initForm();
-    applyTheme();
-    renderTable(true);
-    renderSummary();
-  });
-
-  document.getElementById('palette').addEventListener('click', function (e) {
-    var btn = e.target.closest('.swatch');
-    if (!btn) return;
-    state.tema = btn.getAttribute('data-tema');
-    state.aksen = '';
-    save();
-    applyTheme();
-  });
-
-  document.getElementById('warnaKustom').addEventListener('input', function (e) {
-    state.aksen = e.target.value;
-    save();
-    applyTheme();
-  });
-
-  document.getElementById('btnThemeReset').addEventListener('click', function () {
-    state.aksen = '';
-    save();
-    applyTheme();
-  });
-
-  var tbody = document.getElementById('tbody');
-
-  tbody.addEventListener('change', function (e) {
-    var tr = e.target.closest('tr');
-    if (!tr || !e.target.classList.contains('cek')) return;
-    var i = Number(tr.getAttribute('data-i'));
-    state.rows[i].lunas = e.target.checked;
-    save();
-    renderTable();
-    renderSummary();
-  });
-
-  tbody.addEventListener('input', function (e) {
-    var tr = e.target.closest('tr');
-    if (!tr) return;
-    var i = Number(tr.getAttribute('data-i'));
-    if (e.target.classList.contains('catatan')) {
-      state.rows[i].catatan = e.target.value;
-      save();
-    } else if (e.target.classList.contains('dibayar')) {
-      state.rows[i].dibayar = Math.max(0, Number(e.target.value) || 0);
-      save();
-      renderSummary();
-    }
-  });
-
-  function tandaiSemua(nilai) {
-    state.rows.forEach(function (r) { r.lunas = nilai; });
-    save();
-    renderTable();
-    renderSummary();
-  }
-
-  document.getElementById('btnSemuaLunas').addEventListener('click', function () { tandaiSemua(true); });
-  document.getElementById('btnBatalSemua').addEventListener('click', function () { tandaiSemua(false); });
-
-  document.getElementById('btnLunasBulanIni').addEventListener('click', function () {
-    var sekarang = bulanIni();
-    state.rows.forEach(function (r) { if (r.tanggal.slice(0, 7) <= sekarang) r.lunas = true; });
-    save();
-    renderTable();
-    renderSummary();
-  });
-
-  document.getElementById('btnLunasDibayar').addEventListener('click', function () {
-    state.rows.forEach(function (r) { if ((Number(r.dibayar) || 0) > 0) r.lunas = true; });
-    save();
-    renderTable();
-    renderSummary();
-  });
-
-  document.getElementById('btnCsv').addEventListener('click', function () {
-    var baris = [['Bulan', 'Periode', 'Tanggal', 'Pokok', 'Bunga', 'Angsuran', 'Dibayar', 'Sisa Pokok', 'Status', 'Catatan']];
-    state.rows.forEach(function (r, i) {
-      baris.push([i + 1, formatPeriode(r.tanggal), r.tanggal, r.pokok, r.bunga, r.angsuran,
-        r.dibayar || 0, r.saldo, r.lunas ? 'Sudah dibayar' : 'Belum dibayar', r.catatan || '']);
-    });
-    var csv = '\uFEFF' + baris.map(function (row) {
-      return row.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(';');
-    }).join('\r\n');
-    unduh('kpr-bulanan.csv', csv, 'text/csv;charset=utf-8');
-  });
-
-  document.getElementById('btnJson').addEventListener('click', function () {
-    unduh('kpr-bulanan-cadangan.json', JSON.stringify(state, null, 2), 'application/json');
-  });
-
-  document.getElementById('imporJson').addEventListener('change', function (e) {
-    var file = e.target.files && e.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () {
-      try {
-        var data = JSON.parse(reader.result);
-        if (!data || !Array.isArray(data.rows)) throw new Error('format salah');
-        state = {
-          pinjaman: Object.assign(defaultState().pinjaman, data.pinjaman || {}),
-          rows: data.rows,
-          tema: PALETTES[data.tema] ? data.tema : 'biru',
-          aksen: /^#[0-9a-f]{6}$/i.test(data.aksen || '') ? data.aksen : ''
-        };
-        save();
-        initForm();
-        applyTheme();
-        renderTable(true);
-        renderSummary();
-        alert('Data berhasil dimuat.');
-      } catch (err) {
-        alert('File JSON tidak valid.');
-      }
-      e.target.value = '';
-    };
-    reader.readAsText(file);
-  });
-
-  document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
-
-  var reveals = document.querySelectorAll('.reveal');
-  if (reduce() || !('IntersectionObserver' in window)) {
-    reveals.forEach(function (el) { el.classList.add('in'); });
-  } else {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) {
-          en.target.classList.add('in');
-          io.unobserve(en.target);
+        if (checkbox.checked) {
+          paidMonths++;
+          const rowVal = Number(inputPaid.value.replace(/[^0-9]/g, '')) || monthlyInstallment;
+          totalPaid += rowVal;
+          statusLabel.textContent = 'Sudah dibayar';
+          statusPill.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+          statusPill.classList.add('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+          row.classList.add('bg-[#ecfdf5]/40');
+        } else {
+          statusLabel.textContent = 'Belum dibayar';
+          statusPill.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+          statusPill.classList.remove('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+          row.classList.remove('bg-[#ecfdf5]/40');
         }
       });
-    }, { threshold: .06, rootMargin: '0px 0px -24px 0px' });
-    reveals.forEach(function (el) { io.observe(el); });
-  }
 
-  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-    navigator.serviceWorker.register('./sw.js').catch(function () {});
-  }
-})();
-</script>
-</body>
-</html>
+      const percentage = ((paidMonths / totalMonths) * 100).toFixed(1);
+      const remaining = Math.max(0, totalInstallmentTarget - totalPaid);
+
+      if (metricPaidMonths) metricPaidMonths.textContent = paidMonths;
+      if (kpiPercent) kpiPercent.textContent = percentage + '%';
+      if (kpiPercentBadge) kpiPercentBadge.textContent = percentage + '%';
+      if (kpiProgressBar) kpiProgressBar.style.width = percentage + '%';
+
+      if (statusPaidText) {
+        statusPaidText.innerHTML = 'Sudah dibayar: <strong class="text-secondary">' + paidMonths + '</strong> dari ' + totalMonths + ' bulan';
+      }
+      if (statusPaidAmount) statusPaidAmount.textContent = formatRupiah(totalPaid);
+      if (statusRemainingAmount) statusRemainingAmount.textContent = formatRupiah(remaining);
+    }
+
+    // Bind checkboxes and input events
+    rows.forEach(row => {
+      const checkbox = row.querySelector('.row-checkbox');
+      const inputPaid = row.querySelector('.input-paid');
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          if (inputPaid.value === '0' || inputPaid.value === '') {
+            inputPaid.value = monthlyInstallment.toLocaleString('id-ID');
+          }
+        } else {
+          inputPaid.value = '0';
+        }
+        recalculateMetrics();
+      });
+
+      inputPaid.addEventListener('input', () => {
+        const val = Number(inputPaid.value.replace(/[^0-9]/g, ''));
+        checkbox.checked = val > 0;
+        recalculateMetrics();
+      });
+    });
+
+    // Bulk buttons
+    const btnMarkAll = document.getElementById('btn-mark-all-paid');
+    if (btnMarkAll) {
+      btnMarkAll.addEventListener('click', () => {
+        rows.forEach(row => {
+          const cb = row.querySelector('.row-checkbox');
+          const inputPaid = row.querySelector('.input-paid');
+          cb.checked = true;
+          inputPaid.value = monthlyInstallment.toLocaleString('id-ID');
+        });
+        recalculateMetrics();
+      });
+    }
+
+    const btnCancelAll = document.getElementById('btn-cancel-all');
+    if (btnCancelAll) {
+      btnCancelAll.addEventListener('click', () => {
+        rows.forEach(row => {
+          const cb = row.querySelector('.row-checkbox');
+          const inputPaid = row.querySelector('.input-paid');
+          cb.checked = false;
+          inputPaid.value = '0';
+        });
+        recalculateMetrics();
+      });
+    }
+
+    const btnMarkCurrent = document.getElementById('btn-mark-to-current');
+    if (btnMarkCurrent) {
+      btnMarkCurrent.addEventListener('click', () => {
+        // Mark first 3 months as an example
+        rows.forEach((row, idx) => {
+          const cb = row.querySelector('.row-checkbox');
+          const inputPaid = row.querySelector('.input-paid');
+          if (idx < 3) {
+            cb.checked = true;
+            inputPaid.value = monthlyInstallment.toLocaleString('id-ID');
+          }
+        });
+        recalculateMetrics();
+      });
+    }
+
+    const btnMarkPaid = document.getElementById('btn-mark-paid');
+    if (btnMarkPaid) {
+      btnMarkPaid.addEventListener('click', () => {
+        rows.forEach((row) => {
+          const inputPaid = row.querySelector('.input-paid');
+          const cb = row.querySelector('.row-checkbox');
+          const val = Number(inputPaid.value.replace(/[^0-9]/g, ''));
+          if (val > 0) cb.checked = true;
+        });
+        recalculateMetrics();
+      });
+    }
+
+    // Color chips interaction
+    const chips = document.querySelectorAll('.color-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => {
+          c.classList.remove('bg-secondary-fixed', 'text-on-secondary-fixed', 'ring-2', 'ring-secondary/50');
+          c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+        chip.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        chip.classList.add('bg-secondary-fixed', 'text-on-secondary-fixed', 'ring-2', 'ring-secondary/50');
+      });
+    });
+
+    // Initial recalculate
+    recalculateMetrics();
+  })();
+</script></div></main><footer class="w-full bg-surface-container-low shadow-[0_-1px_8px_rgba(0,0,0,0.02)]"><div class="max-w-7xl mx-auto px-gutter-desktop py-space-xl flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-6 h-6 rounded bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-primary-fixed text-[14px]">real_estate_agent</span></div><span class="font-label-md text-label-md text-on-surface">KPR Amortize · Intelligence Credit Engine</span></div><p class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left">Kalkulasi menggunakan metode anuitas dan efektif perbankan Indonesia (BI / OJK Reference). Data disimpan lokal di peramban Anda.</p><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-on-surface-variant">© 2025 KPR Amortize</span></div></div></footer></body></html>
