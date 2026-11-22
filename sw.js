@@ -1,4 +1,4 @@
-var CACHE = 'kpr-bulanan-v2';
+var CACHE = 'kpr-bulanan-v3';
 var ASSETS = ['./', './index.html'];
 
 self.addEventListener('install', function (e) {
